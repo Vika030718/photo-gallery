@@ -1,0 +1,25 @@
+{
+  "name": "photo-gallery",
+  "version": "1.0.0",
+  "description": "test app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "author": "Viktoriia Matviieva",
+  "license": "ISC",
+  "dependencies": {
+    "-": "^0.0.1",
+    "concurrently": "^7.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "express-fileupload": "^1.3.1",
+    "nodemon": "^2.0.15",
+    "pg": "^8.7.3",
+    "react-router": "^6.2.2",
+    "react-router-dom": "^6.2.2"
+  }
+}
