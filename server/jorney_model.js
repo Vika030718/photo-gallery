@@ -11,7 +11,7 @@ const pool = new Pool({
   port: 5432,
 });
 
-const getMerchants = () => {
+const getJorneys = () => {
   return new Promise(function (resolve, reject) {
     pool.query("SELECT * FROM jorney ORDER BY id ASC", (error, results) => {
       if (error) {
@@ -67,7 +67,7 @@ const deleteMerchant = () => {
 };
 
 module.exports = {
-  getMerchants,
+  getJorneys,
   createMerchant,
   deleteMerchant,
   getJorney,

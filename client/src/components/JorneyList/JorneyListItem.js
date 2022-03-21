@@ -16,7 +16,7 @@ export default function JorneyListItem({
           <div className="image-wrapper">
             <Card.Img
               variant="top"
-              src={`../../../uploads/${creation_date}/banner/${images.image_0}`}
+              src={`../../../uploads/${creation_date}/banner/${images}`}
             />
           </div>
 

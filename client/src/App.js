@@ -9,7 +9,7 @@ function App() {
     getJorneys();
   }, []);
   function getJorneys() {
-    fetch("http://localhost:5000/all")
+    fetch("http://localhost:5000/")
       .then((response) => {
         return response.json();
       })

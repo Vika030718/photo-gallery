@@ -24,7 +24,16 @@ export default function Jorney() {
     <Container fluid>
       {jorney ? (
         <div>
-          <h1 className="mt-3">{jorney[0].title}</h1>
+          <div
+            className="jorney-banner"
+            style={{
+              backgroundImage: `url(
+                "../../../uploads/${jorney[0].creation_date}/banner/${jorney[0].images[0]}"
+              )`,
+            }}
+          >
+            <h1 className="mt-3">{jorney[0].title}</h1>
+          </div>
           <Row>
             {jorney[0].images.map((image, i) => (
               <Col md="4" lg="3">

@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
 const { response } = require("express");
-const merchant_model = require("./merchant_model");
+const merchant_model = require("./server/jorney_model");
 const fs = require("fs");
 
 app.use(fileUpload());
@@ -21,6 +21,19 @@ app.use(function (req, res, next) {
 });
 app.listen(port, () => console.log("Backend server live on " + port));
 
+function add_images_to_jorney(files_names, item) {
+  if (files_names.length !== 0) {
+    const images = [];
+    const new_res = files_names.map((file_name, i) => {
+      const image_name = `image_${i}`;
+      images[i] = file_name;
+    });
+    item.images = images;
+    return item;
+  }
+  return item;
+}
+
 // Upload Endpoint
 app.put("/upload", (req, res) => {
   if (req.files === null) {
@@ -28,24 +41,21 @@ app.put("/upload", (req, res) => {
   }
 
   const file = req.files.file;
-  const jorney_id = req.body.jorney_id;
 
   file.mv(
-    `${__dirname}/client/public/uploads/${jorney_id}/${file.name}`,
+    `${__dirname}/client/public/uploads/${req.body.jorney_id}/${file.name}`,
     (err) => {
       if (err) {
-        console.error(err);
         return res.status(500).send(err);
       }
-
       res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
     }
   );
 });
 
-app.get("/all", (req, res) => {
+app.get("/", (req, res) => {
   merchant_model
-    .getMerchants()
+    .getJorneys()
     .then((response) => {
       const new_resp = response.map((item, i) => {
         const files_names = fs.readdirSync(
@@ -54,18 +64,9 @@ app.get("/all", (req, res) => {
             return files;
           }
         );
-        if (files_names.length !== 0) {
-          const images = {};
-          const new_res = files_names.map((file_name, i) => {
-            const image_name = `image_${i}`;
-            images[`${image_name}`] = file_name;
-          });
-          item.images = images;
-          return item;
-        }
-        return item;
+        return add_images_to_jorney(files_names, item);
       });
-      console.log(response);
+
       res.status(200).send(new_resp);
     })
     .catch((error) => {
@@ -84,19 +85,11 @@ app.get("/:id", (req, res) => {
             return files;
           }
         );
-        if (files_names.length !== 0) {
-          const images = [];
-          const new_res = files_names.map((file_name, i) => {
-            const image_name = `image_${i}`;
-            images[i] = file_name;
-          });
-          item.images = images;
-          return item;
-        }
-        return item;
+
+        return add_images_to_jorney(files_names, item);
       });
-      console.log(response);
-      res.status(200).send(response);
+
+      res.status(200).send(new_resp);
     })
     .catch((error) => {
       res.status(500).send(error);
