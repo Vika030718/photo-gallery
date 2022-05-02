@@ -14,55 +14,43 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        setJorneys(data);
+        let sorted_data = data.reverse();
+        setJorneys(sorted_data);
       });
   }
-  // function createMerchant() {
-  //   let name = prompt("Enter merchant name");
-  //   let email = prompt("Enter merchant email");
-  //   fetch("http://localhost:3001/merchants", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ name, email }),
-  //   })
-  //     .then((response) => {
-  //       return response.text();
-  //     })
-  //     .then((data) => {
-  //       alert(data);
-  //       getMerchant();
-  //     });
-  // }
 
-  // function deleteMerchant() {
-  //   let id = prompt("Enter merchant id");
-  //   fetch(`http://localhost:3001/merchants/${id}`, {
-  //     method: "DELETE",
-  //   })
-  //     .then((response) => {
-  //       return response.text();
-  //     })
-  //     .then((data) => {
-  //       alert(data);
-  //       getMerchant();
-  //     });
-  // }
+  function deleteJorney(id) {
+    fetch(`http://localhost:5000/jorney/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        return response.text();
+      })
+      .then((data) => {
+        getJorneys();
+      });
+  }
+
   return (
     <>
-      <Container fluid>
+      <Container fluid className="wrapper">
         <Row className="mt-3">
           {jorneys
             ? jorneys.map((jorney, i) => {
-                console.log(jorney);
-                return <JorneyList jorney={jorney} key={i} />;
+                return (
+                  <JorneyList
+                    jorney={jorney}
+                    key={i}
+                    onRemoveJorney={(id) => {
+                      console.log("Inside list");
+                      deleteJorney(id);
+                      // getJorneys();
+                    }}
+                  />
+                );
               })
             : "There is no jorneys data available"}
           <br />
-          {/* <button onClick={createMerchant}>Add merchant</button>
-              <br />
-              <button onClick={deleteMerchant}>Delete merchant</button> */}
         </Row>
       </Container>
     </>

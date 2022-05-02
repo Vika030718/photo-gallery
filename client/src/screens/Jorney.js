@@ -1,50 +1,83 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
+import FileUpload from "../components/FileUpload";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export default function Jorney() {
   let { id } = useParams();
   const [jorney, setJorney] = useState(false);
+  const [banner_src, setBannerSrc] = useState("../../../images/__blank.jpg");
 
   useEffect(() => {
     getJorney();
   }, []);
-  console.log(jorney);
 
   function getJorney() {
-    fetch(`http://localhost:5000/${id}`)
+    console.log("Start getting jorney");
+    fetch(`http://localhost:5000/getjorney/${id}`)
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        setJorney(data);
+        let photos = data[0].images.photos_names.reverse();
+        data[0].images.photos_names = photos;
+        setJorney(data[0]);
+        if (data[0].images.banner_name)
+          setBannerSrc(
+            `http://localhost:5000/uploads/${data[0].creation_date}/banner/${data[0].images.banner_name}`
+          );
       });
   }
+
   return (
-    <Container fluid>
+    <Container fluid className="wrapper">
       {jorney ? (
-        <div>
+        <div className="mt-4">
           <div
             className="jorney-banner"
-            style={{
-              backgroundImage: `url(
-                "../../../uploads/${jorney[0].creation_date}/banner/${jorney[0].images[0]}"
-              )`,
-            }}
+            style={{ backgroundImage: `url(${banner_src})` }}
           >
-            <h1 className="mt-3">{jorney[0].title}</h1>
+            <div className="jorney-info">
+              <h1 className="mt-0">{jorney.title}</h1>
+              <p>{jorney.description}</p>
+              <p className="mb-0">From: {jorney.start_date}</p>
+              <p className="mb-0">Till: {jorney.end_date}</p>
+            </div>
+
+            <div className="jorney-info mt-3">
+              <FileUpload
+                isBanner={true}
+                jorney_id={jorney.creation_date}
+                onUpload={(uploadedFile) => {
+                  console.log(uploadedFile);
+                  if (uploadedFile) {
+                    console.log(banner_src);
+                  }
+                }}
+              />
+            </div>
           </div>
+          <Row className="mb-3">
+            <FileUpload isBanner={false} jorney_id={jorney.creation_date} />
+          </Row>
           <Row>
-            {jorney[0].images.map((image, i) => (
-              <Col md="4" lg="3">
-                <div className="jorney-photo">
-                  <img
-                    alt="photo_"
-                    src={`../../../uploads/${jorney[0].creation_date}/photos/${image}`}
-                  />
-                </div>
-              </Col>
-            ))}
+            {jorney.images
+              ? jorney.images.photos_names.map((image, i) => (
+                  <Col md="4" lg="3" key={i}>
+                    <div className="jorney-photo">
+                      {/* <div className="jorney-delete">
+                        <FontAwesomeIcon icon={faXmark} />
+                      </div> */}
+                      <img
+                        alt="photo_"
+                        src={`http://localhost:5000/uploads/${jorney.creation_date}/photos/${image}`}
+                      />
+                    </div>
+                  </Col>
+                ))
+              : "There are no photos available"}
           </Row>
         </div>
       ) : (

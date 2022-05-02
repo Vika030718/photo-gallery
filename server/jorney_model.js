@@ -35,32 +35,32 @@ const getJorney = (id) => {
     );
   });
 };
-const createMerchant = (body) => {
+const createJorney = (body) => {
   return new Promise(function (resolve, reject) {
-    const { name, email } = body;
+    const { title, start_date, end_date, description, creation_date } = body;
     pool.query(
-      "INSERT INTO merchants (name, email) VALUES ($1, $2) RETURNING *",
-      [name, email],
+      "INSERT INTO jorney (title, start_date, end_date, description, creation_date) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [title, start_date, end_date, description, creation_date],
       (error, results) => {
         if (error) {
           reject(error);
         }
-        resolve(`A new merchant has been added added: ${results.rows[0]}`);
+        resolve(results.rows[0]);
       }
     );
   });
 };
-const deleteMerchant = () => {
+const deleteJorney = (id) => {
   return new Promise(function (resolve, reject) {
-    const id = parseInt(request.params.id);
+    console.log("Inside model");
     pool.query(
-      "DELETE FROM merchants WHERE id = $1",
+      "DELETE FROM jorney WHERE creation_date = $1",
       [id],
       (error, results) => {
         if (error) {
           reject(error);
         }
-        resolve(`Merchant deleted with ID: ${id}`);
+        resolve(`jorney deleted with ID: ${id}`);
       }
     );
   });
@@ -68,7 +68,7 @@ const deleteMerchant = () => {
 
 module.exports = {
   getJorneys,
-  createMerchant,
-  deleteMerchant,
+  createJorney,
+  deleteJorney,
   getJorney,
 };
