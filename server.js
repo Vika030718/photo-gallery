@@ -3,12 +3,10 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
-const { response } = require("express");
 const jorney_model = require("./server/jorney_model");
 const fs = require("fs");
 
-// Function to serve all static files
-// inside public directory.
+// Function to serve all static files inside public directory.
 app.use(express.static("server"));
 app.use("/uploads", express.static("uploads"));
 
@@ -51,16 +49,15 @@ function add_images_to_jorney(item) {
   return item;
 }
 
-// Upload Endpoint
 app.post("/upload", (req, res) => {
   if (req.files === null) {
     return res.status(400).json({ msg: "No file uploaded" });
   }
 
   const file = req.files.file;
-  // file.name = Date.now();
+  file.name = Date.now();
 
-  if (req.body.isBanner === "true") {
+  if (req.body.fileType === "banner") {
     const old_banner_name = fs.readdirSync(
       `${__dirname}/server/uploads/${req.body.jorney_id}/banner/`,
       (err, files) => {
@@ -79,10 +76,16 @@ app.post("/upload", (req, res) => {
     }
   }
 
-  dir =
-    req.body.isBanner === "true"
-      ? `${__dirname}/server/uploads/${req.body.jorney_id}/banner/${file.name}`
-      : `${__dirname}/server/uploads/${req.body.jorney_id}/photos/${file.name}`;
+  switch (req.body.fileType) {
+    case "banner":
+      dir = `${__dirname}/server/uploads/${req.body.jorney_id}/banner/${file.name}`;
+      break;
+    case "photo":
+      dir = `${__dirname}/server/uploads/${req.body.jorney_id}/photos/${file.name}`;
+      break;
+    default:
+      console.log("Sorry, we are out of " + fileType + ".");
+  }
 
   file.mv(dir, (err) => {
     if (err) {
@@ -138,7 +141,7 @@ app.post("/addnewjorney", (req, res) => {
     });
 });
 
-function deleteJorneyFolder(path) {
+function deleteFolder(path) {
   let files = fs.readdirSync(path);
 
   if (files.length > 0) {
@@ -150,17 +153,14 @@ function deleteJorneyFolder(path) {
         force: true,
       },
       (error) => {
-        console.log("First Try");
         console.log(error);
       }
     );
-    console.log("Delete INFO");
   } else if (files.length == 0) return "Everything is clean";
   return "Everything is clean";
 }
 
 app.delete("/jorney/:id", (req, res) => {
-  console.log(req.params);
   jorney_model
     .deleteJorney(req.params.id)
     .then((response) => {
@@ -171,6 +171,15 @@ app.delete("/jorney/:id", (req, res) => {
     });
 
   let path = `${__dirname}/server/uploads/${req.params.id}`;
-  console.log(deleteJorneyFolder(path));
-  console.log(deleteJorneyFolder(path));
+  deleteFolder(path);
+  deleteFolder(path);
+});
+
+app.delete("/jorney/deletephoto/:id/:photoId", (req, res) => {
+  let path = `${__dirname}/server/uploads/${req.params.id}/photos/${req.params.photoId}`;
+  try {
+    fs.unlinkSync(path);
+  } catch (err) {
+    console.error(err);
+  }
 });

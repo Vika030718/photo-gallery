@@ -42,9 +42,8 @@ function App() {
                     jorney={jorney}
                     key={i}
                     onRemoveJorney={(id) => {
-                      console.log("Inside list");
                       deleteJorney(id);
-                      // getJorneys();
+                      getJorneys();
                     }}
                   />
                 );

@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import "./JorneyListItem.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
@@ -25,7 +24,7 @@ export default function JorneyListItem({
 
   return (
     <Col md="4" lg="3" className="mb-3">
-      <div className="position-relative">
+      <div className="jorney-card-wrapper">
         <div className="jorney-delete">
           <button
             onClick={() => {
