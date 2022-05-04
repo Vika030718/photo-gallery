@@ -1,22 +1,13 @@
-// CREATE TABLE jorney( id SERIAL PRIMARY KEY, title TEXT, start_date DATE, end_date DATE, description TEXT, creation_date NUMERIC);
-// INSERT INTO jorney (title, start_date, end_date, description, creation_date) VALUES ('Spain', '2021-11-03', '2021-11-08', 'Jorney to Spain', '1646986027008');
-// INSERT INTO jorney (title, start_date, end_date, description, creation_date) VALUES ('Cyprus', '2022-02-03', '2022-02-12', 'Jorney to Cyprus', '1646986027005');
-
-const Pool = require("pg").Pool;
-// const pool = new Pool({
-//   user: "admin",
-//   host: "localhost",
-//   database: "my_jorneys",
-//   password: "root",
-//   port: 5432,
-// });
-
+require("dotenv").config();
+const { Pool } = require("pg");
+const isProduction = process.env.NODE_ENV === "production";
+const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
 const pool = new Pool({
-  user: "jkjjtqyzqxoith",
-  host: "ec2-35-168-194-15.compute-1.amazonaws.com",
-  database: "d3gq3dnm7l2rkp",
-  password: "37d8d42af3ba7e0a67be526bbb810850409387ee56bb867a6b75bf2d93026149",
-  port: 5432,
+  connectionString: isProduction ? process.env.DATABASE_URL : connectionString,
+  // ssl: isProduction,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 const getJorneys = () => {
