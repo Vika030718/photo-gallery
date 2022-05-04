@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
 const cors = require("cors");
-const jorney_model = require("./server/jorney_model");
+const jorney_model = require("./jorney_model");
 const fs = require("fs");
 
 // Function to serve all static files inside public directory.
@@ -26,14 +26,14 @@ app.listen(port, () => console.log("Backend server live on " + port));
 
 function add_images_to_jorney(item) {
   const files_names = fs.readdirSync(
-    `${__dirname}/server/uploads/${item.creation_date}/photos/`,
+    `${__dirname}/uploads/${item.creation_date}/photos/`,
     (err, files) => {
       return files;
     }
   );
 
   const banner_name = fs.readdirSync(
-    `${__dirname}/server/uploads/${item.creation_date}/banner/`,
+    `${__dirname}/uploads/${item.creation_date}/banner/`,
     (err, files) => {
       return files;
     }
@@ -59,7 +59,7 @@ app.post("/upload", (req, res) => {
 
   if (req.body.fileType === "banner") {
     const old_banner_name = fs.readdirSync(
-      `${__dirname}/server/uploads/${req.body.jorney_id}/banner/`,
+      `${__dirname}/uploads/${req.body.jorney_id}/banner/`,
       (err, files) => {
         return files;
       }
@@ -67,7 +67,7 @@ app.post("/upload", (req, res) => {
 
     if (old_banner_name.length !== 0) {
       fs.unlink(
-        `${__dirname}/server/uploads/${req.body.jorney_id}/banner/${old_banner_name}`,
+        `${__dirname}/uploads/${req.body.jorney_id}/banner/${old_banner_name}`,
         function (err) {
           if (err) throw err;
           console.log("File deleted!");
@@ -78,10 +78,10 @@ app.post("/upload", (req, res) => {
 
   switch (req.body.fileType) {
     case "banner":
-      dir = `${__dirname}/server/uploads/${req.body.jorney_id}/banner/${file.name}`;
+      dir = `${__dirname}/uploads/${req.body.jorney_id}/banner/${file.name}`;
       break;
     case "photo":
-      dir = `${__dirname}/server/uploads/${req.body.jorney_id}/photos/${file.name}`;
+      dir = `${__dirname}/uploads/${req.body.jorney_id}/photos/${file.name}`;
       break;
     default:
       console.log("Sorry, we are out of " + fileType + ".");
@@ -128,7 +128,7 @@ app.post("/addnewjorney", (req, res) => {
   jorney_model
     .createJorney(req.body)
     .then((response) => {
-      let dir = `${__dirname}/server/uploads/${response.creation_date}`;
+      let dir = `${__dirname}/uploads/${response.creation_date}`;
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
         fs.mkdirSync(`${dir}/banner`);
@@ -170,13 +170,13 @@ app.delete("/jorney/:id", (req, res) => {
       res.status(500).send(error);
     });
 
-  let path = `${__dirname}/server/uploads/${req.params.id}`;
+  let path = `${__dirname}/uploads/${req.params.id}`;
   deleteFolder(path);
   deleteFolder(path);
 });
 
 app.delete("/jorney/deletephoto/:id/:photoId", (req, res) => {
-  let path = `${__dirname}/server/uploads/${req.params.id}/photos/${req.params.photoId}`;
+  let path = `${__dirname}/uploads/${req.params.id}/photos/${req.params.photoId}`;
   try {
     fs.unlinkSync(path);
   } catch (err) {
