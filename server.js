@@ -7,7 +7,7 @@ const jorney_model = require("./jorney_model");
 const fs = require("fs");
 const path = require("path");
 
-// app.use(express.static("public"));
+app.use(express.static("public"));
 app.use("/uploads", express.static("uploads"));
 
 app.use(fileUpload());
