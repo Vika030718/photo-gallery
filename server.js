@@ -110,7 +110,6 @@ app.get("/", (req, res) => {
 });
 
 app.get("/getjorneys", (req, res) => {
-  console.log("_______________________-I am in");
   jorney_model
     .getJorneys()
     .then((response) => {
