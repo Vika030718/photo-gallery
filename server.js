@@ -25,6 +25,9 @@ app.use(function (req, res, next) {
 app.listen(port, () => console.log("Backend server live on " + port));
 
 function add_images_to_jorney(item) {
+  if (!fs.existsSync(`${__dirname}/uploads/${item.creation_date}`)) {
+    return false;
+  }
   const files_names = fs.readdirSync(
     `${__dirname}/uploads/${item.creation_date}/photos/`,
     (err, files) => {
@@ -114,11 +117,19 @@ app.get("/getjorneys", (req, res) => {
     .getJorneys()
     .then((response) => {
       const new_resp = response.map((item, i) => {
-        return add_images_to_jorney(item);
+        let jorney = add_images_to_jorney(item);
+        if (jorney) {
+          return add_images_to_jorney(item);
+        } else return false;
       });
-      res.status(200).send(new_resp);
+      let new_resp_2 = new_resp.filter(function (x) {
+        if (x) return x;
+      });
+      console.log(new_resp_2);
+      res.status(200).send(new_resp_2);
     })
     .catch((error) => {
+      console.log(error);
       res.status(500).send(error);
     });
 });
