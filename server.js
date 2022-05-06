@@ -3,12 +3,14 @@ const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 
+console.log(process.env.PORT);
+
 // Local Modules
 const jorneyRoute = require("./routes/jorney.js");
 
 // Server Initialization
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000; // determine the port to listen to by checking the PORT first and giving it a default value after
 
 app.use(express.static("public"));
 app.use("/uploads", express.static("uploads"));
