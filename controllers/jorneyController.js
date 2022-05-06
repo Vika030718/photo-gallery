@@ -9,7 +9,6 @@ function add_images_to_jorney(item) {
     "..",
     `uploads/${item.creation_date}`
   );
-  console.log(jorney_path);
   if (!fs.existsSync(jorney_path)) {
     return false;
   }
@@ -83,7 +82,6 @@ exports.jorneys_get = (req, res) => {
   jorney_model
     .getJorneys()
     .then((response) => {
-      console.log(response);
       const new_resp = response.map((item, i) => {
         let jorney = add_images_to_jorney(item);
         if (jorney) {
@@ -93,7 +91,6 @@ exports.jorneys_get = (req, res) => {
       let new_resp_2 = new_resp.filter(function (x) {
         if (x) return x;
       });
-      console.log(new_resp);
       res.status(200).send(new_resp_2);
     })
     .catch((error) => {

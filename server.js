@@ -3,8 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 
-console.log(process.env.PORT);
-
 // Local Modules
 const jorneyRoute = require("./routes/jorney.js");
 
