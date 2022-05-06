@@ -1,7 +1,8 @@
 const isProduction = process.env.NODE_ENV === "production";
 if (!isProduction) require("dotenv").config();
 const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
-
+console.log(isProduction);
+console.log(process.env.DATABASE_URL);
 const { Pool } = require("pg");
 
 const pool = new Pool({
